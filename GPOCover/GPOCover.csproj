@@ -6,6 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-GPOCover-9b07d088-3b33-4912-995a-92d6c25f48bc</UserSecretsId>
     <Platforms>x64</Platforms>
+    <Configurations>Debug;Release;published</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='published|x64'">
+    <Optimize>True</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

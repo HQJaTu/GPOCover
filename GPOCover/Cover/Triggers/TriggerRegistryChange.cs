@@ -7,29 +7,30 @@ using GPOCover.RegistryUtils;
 using Microsoft.Win32;
 
 
-namespace GPOCover.Cover;
+namespace GPOCover.Cover.Triggers;
 #pragma warning disable 1416
 
-public class TriggerRegistryChange
+internal class TriggerRegistryChange : TriggerBase
 {
-
     protected RegistryKey Hive { get; set; }
     protected string KeyPath { get; set; }
 
     protected readonly ILogger<TriggerRegistryChange> _logger;
 
-    public TriggerRegistryChange(string path, ILoggerFactory loggerFactory)
+    public TriggerRegistryChange(string path, ILoggerFactory loggerFactory) :
+        base()
     {
-        this._logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
-        (this.Hive, this.KeyPath) = Parse(path);
-        var keychange = new RegistryKeyChange(this.Hive, this.KeyPath, loggerFactory);
+        _logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
+        (Hive, KeyPath) = Parse(path);
+        var keychange = new RegistryKeyChange(Hive, KeyPath, loggerFactory);
         keychange.RegistryKeyChanged += new EventHandler<RegistryKeyChangedEventArgs>(OnRegChanged);
         keychange.Start();
     }
 
     private void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
     {
-        _logger.LogWarning($"Registry key: {this.Hive.Name}\\{this.KeyPath}, has changed");
+        _logger.LogWarning($"Registry key: {Hive.Name}\\{KeyPath}, has changed");
+        this.RunActions();
     }
 
     protected static (RegistryKey, string) Parse(string path)
@@ -60,9 +61,9 @@ public class TriggerRegistryChange
         var registryObj = obj as TriggerRegistryChange;
         if (registryObj is null)
             return false;
-        if (this.Hive != registryObj.Hive)
+        if (Hive != registryObj.Hive)
             return false;
-        if (this.KeyPath != registryObj.KeyPath)
+        if (KeyPath != registryObj.KeyPath)
             return false;
 
         return true;

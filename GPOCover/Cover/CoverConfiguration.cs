@@ -43,10 +43,10 @@ public class CoverConfiguration
 }
 
 public class CoverConfigurationAction {
-    public ActionType action { get; set; }
-
+    [YamlMember(Alias = "Noop", ApplyNamingConventions = false)]
+    public bool? Noop { get; set; }
+    [YamlMember(Alias = "Sleep", ApplyNamingConventions = false)]
+    public uint? Sleep { get; set; }
     [YamlMember(Alias = "Execute", ApplyNamingConventions = false)]
     public string? Execute { get; set; }
-    [YamlMember(Alias = "Noop", ApplyNamingConventions = false)]
-    public string? Noop { get; set; }
 }
