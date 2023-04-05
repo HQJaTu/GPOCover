@@ -17,8 +17,8 @@ internal class TriggerRegistryChange : TriggerBase
 
     protected readonly ILogger<TriggerRegistryChange> _logger;
 
-    public TriggerRegistryChange(string path, ILoggerFactory loggerFactory) :
-        base()
+    public TriggerRegistryChange(uint id, string path, ILoggerFactory loggerFactory) :
+        base(id)
     {
         _logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
         (Hive, KeyPath) = Parse(path);
@@ -29,7 +29,7 @@ internal class TriggerRegistryChange : TriggerBase
 
     private void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
     {
-        _logger.LogWarning($"Registry key: {Hive.Name}\\{KeyPath}, has changed");
+        _logger.LogWarning($"Trigger {this.Id}: Registry key: {Hive.Name}\\{KeyPath}, has changed");
         this.RunActions();
     }
 

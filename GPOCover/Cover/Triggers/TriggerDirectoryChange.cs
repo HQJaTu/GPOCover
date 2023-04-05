@@ -16,8 +16,8 @@ internal class TriggerDirectoryChange : TriggerBase
 
     protected readonly ILogger<TriggerDirectoryChange> _logger;
 
-    public TriggerDirectoryChange(DirectoryInfo directoryInfo, ILoggerFactory loggerFactory) :
-        base()
+    public TriggerDirectoryChange(uint id, DirectoryInfo directoryInfo, ILoggerFactory loggerFactory) :
+        base(id)
     {
         _logger = loggerFactory.CreateLogger<TriggerDirectoryChange>();
         _directoryInfo = directoryInfo;
@@ -29,19 +29,19 @@ internal class TriggerDirectoryChange : TriggerBase
 
     public void OnChange(object sender, FileSystemEventArgs e)
     {
-        _logger.LogWarning($"Directory: {_directoryInfo.FullName}, has changed");
+        _logger.LogWarning($"Trigger {this.Id}: Directory: {_directoryInfo.FullName}, has changed");
         this.RunActions();
     }
 
     public void OnRename(object sender, RenamedEventArgs e)
     {
-        _logger.LogWarning($"Directory: {_directoryInfo.FullName}, was renamed");
+        _logger.LogWarning($"Trigger {this.Id}: Directory: {_directoryInfo.FullName}, was renamed");
         this.RunActions();
     }
 
     public void OnError(object sender, ErrorEventArgs e)
     {
-        _logger.LogError($"Directory: {_directoryInfo.FullName}, failed");
+        _logger.LogError($"Trigger {this.Id}: Directory: {_directoryInfo.FullName}, failed");
 }
 
 } // end class TriggerDirectoryChange

@@ -14,8 +14,8 @@ internal class LockFile : TriggerBase
 
     protected readonly ILogger<LockFile> _logger;
 
-    public LockFile(FileInfo fileInfo, ILoggerFactory loggerFactory) :
-        base()
+    public LockFile(uint id, FileInfo fileInfo, ILoggerFactory loggerFactory) :
+        base(id)
     {
         _logger = loggerFactory.CreateLogger<LockFile>();
         _fileInfo = fileInfo;
@@ -31,14 +31,14 @@ internal class LockFile : TriggerBase
             throw new ArgumentException(nameof(_fileInfo.Directory));
         if (!Directory.Exists(_fileInfo.DirectoryName))
         {
-            var di = Directory.CreateDirectory(_fileInfo.DirectoryName);
+            Directory.CreateDirectory(_fileInfo.DirectoryName);
         }
 
         _locked = File.Open(_fileInfo.FullName,
             FileMode.OpenOrCreate,
             FileAccess.Write,
             FileShare.None);
-        _logger.LogInformation($"Locked file: {_fileInfo.FullName}");
+        _logger.LogInformation($"Trigger {this.Id}: Locked file: {_fileInfo.FullName}");
     }
 
 } // end class LockFile

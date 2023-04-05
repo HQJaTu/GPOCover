@@ -10,10 +10,12 @@ namespace GPOCover.Cover.Triggers;
 
 internal class TriggerBase
 {
+    public uint Id { get; }
     internal List<ActionBase> _actions;
 
-    public TriggerBase()
+    public TriggerBase(uint id)
     {
+        this.Id = id;
         this._actions = new List<ActionBase>();
     }
 

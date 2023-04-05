@@ -10,20 +10,22 @@ namespace GPOCover.Cover.Actions;
 internal class Execute : ActionBase
 {
     internal string command;
+    internal string? arguments;
     protected readonly ILogger<Noop> _logger;
 
-    internal Execute(string command, ILoggerFactory loggerFactory)
+    internal Execute(string command, string? arguments, ILoggerFactory loggerFactory)
     {
         this.command = command;
+        this.arguments = arguments;
         _logger = loggerFactory.CreateLogger<Noop>();
     }
 
     override public async Task RunAsync()
     {
         this._logger.LogInformation($"Executing command: {this.command}!");
-        int exitStatus = await Execute.RunProcessAsync(this.command, null);
+        int exitStatus = await Execute.RunProcessAsync(this.command, this.arguments);
         if (exitStatus > 0)
-            this._logger.LogError($"Executing command failed with exit code: {exitStatus}");
+            this._logger.LogError("Executing command failed with exit code: {exitStatus}", exitStatus);
         else
             this._logger.LogInformation($"Executed command ok.");
     }

@@ -15,16 +15,20 @@ namespace GPOCover.Cover;
 
 internal static class CoverConfigurationReader
 {
-    internal static List<CoverConfiguration> Read(DirectoryInfo dirInfo)
+    internal static List<CoverConfiguration> Read(DirectoryInfo dirInfo, ILogger logger)
     {
         var configsOut = new List<CoverConfiguration>();
         var configFilesIn = dirInfo.GetFiles();
         if (!configFilesIn.Any())
+        {
+            logger.LogError($"There are no GPO Cover configuration YAML-files in {dirInfo.FullName}! Cannot continue.");
+
             throw new ArgumentException($"There are no GPO Cover configuration YAML-files in {dirInfo.FullName}! Cannot continue.");
+        }
 
         foreach (var configFile in configFilesIn)
         {
-            var config = ReadOne(configFile);
+            var config = ReadOne(configFile, logger);
             if (String.IsNullOrEmpty(config.Name))
                 throw new ArgumentException($"Need trigger name! Mandatory argument.");
             if (config.Actions is null || config.Actions.Count == 0)
@@ -35,7 +39,7 @@ internal static class CoverConfigurationReader
         return configsOut;
     }
 
-    private static CoverConfiguration ReadOne(FileInfo configurationFile)
+    private static CoverConfiguration ReadOne(FileInfo configurationFile, ILogger logger)
     {
 
         using (var reader = new StreamReader(configurationFile.FullName))
@@ -44,9 +48,17 @@ internal static class CoverConfigurationReader
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
 
-            var obj = deserializer.Deserialize<CoverConfiguration>(reader);
+            try
+            {
+                var obj = deserializer.Deserialize<CoverConfiguration>(reader);
 
-            return obj;
+                return obj;
+            } catch (Exception ex)
+            {
+                logger.LogError($"Failed to parse YAML-file: {configurationFile.FullName}. Error: {ex.Message}");
+
+                throw;
+            }
         }
     }
 

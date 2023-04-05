@@ -36,22 +36,24 @@ public class CoverService
         if (this._fileLocks is null)
             this._fileLocks = new List<LockFile>();
 
+        uint configurationId = 1;
         foreach (var config in this._config) {
+            ++configurationId;
             switch (config.Trigger) {
                 case Trigger.RegistryChange:
-                    var triggerReg = new TriggerRegistryChange(config.Path, this._loggerFactory);
+                    var triggerReg = new TriggerRegistryChange(configurationId, config.Path, this._loggerFactory);
                     this.AddRegistryChangeWatch(triggerReg, config);
                     break;
 
                 case Trigger.FilesystemChange:
                     var dirInfo = new DirectoryInfo(config.Path);
-                    var triggerDir = new TriggerDirectoryChange(dirInfo, this._loggerFactory);
+                    var triggerDir = new TriggerDirectoryChange(configurationId, dirInfo, this._loggerFactory);
                     this.AddDirectoryChangeWatch(triggerDir, config);
                     break;
 
                 case Trigger.FilesystemLock:
                     var fileInfo = new FileInfo(config.Path);
-                    var lockFile = new LockFile(fileInfo, this._loggerFactory);
+                    var lockFile = new LockFile(configurationId, fileInfo, this._loggerFactory);
                     this.AddFileLockWatch(lockFile, config);
                     break;
 
@@ -100,8 +102,15 @@ public class CoverService
 
         if (action.Noop is not null)
             return new Noop(this._loggerFactory);
-        if (!String.IsNullOrEmpty(action.Execute))
-            return new Execute(action.Execute, this._loggerFactory);
+        if (action.Execute is not null)
+        {
+            if (String.IsNullOrEmpty(action.Execute.Command))
+                throw new ArgumentException($"Execute-action for '{config.Name}' needs to have a command!");
+
+            return new Execute(action.Execute.Command, action.Execute.Arguments, this._loggerFactory);
+        }
+        if (action.Sleep is not null)
+            return new Sleep(action.Sleep.Value, this._loggerFactory);
 
         throw new NotImplementedException($"Unknown action type in YAML!");
     }

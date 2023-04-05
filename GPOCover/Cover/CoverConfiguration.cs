@@ -21,7 +21,8 @@ public enum ActionType : ushort
     None = 0,
     Unknown = 1,
     Noop = 2,
-    Execute = 100
+    Execute = 100,
+    Sleep
 }
 
 public class CoverConfiguration
@@ -48,5 +49,13 @@ public class CoverConfigurationAction {
     [YamlMember(Alias = "Sleep", ApplyNamingConventions = false)]
     public uint? Sleep { get; set; }
     [YamlMember(Alias = "Execute", ApplyNamingConventions = false)]
-    public string? Execute { get; set; }
+    public CoverConfigurationActionExecute? Execute { get; set; }
+}
+
+public class CoverConfigurationActionExecute
+{
+    [YamlMember(Alias = "Command", ApplyNamingConventions = false)]
+    public string? Command { get; set; }
+    [YamlMember(Alias = "Arguments", ApplyNamingConventions = false)]
+    public string? Arguments { get; set; }
 }

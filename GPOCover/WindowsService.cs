@@ -18,7 +18,7 @@ public sealed class WindowsService : BackgroundService
         var commonpath = GetFolderPath(SpecialFolder.CommonApplicationData);
         var configPath = Path.Combine(commonpath, @"GPOCover");
         var configDir = new DirectoryInfo(configPath);
-        var config = CoverConfigurationReader.Read(configDir);
+        var config = CoverConfigurationReader.Read(configDir, _logger);
         _jokeService.Configure(config);
     }
 
