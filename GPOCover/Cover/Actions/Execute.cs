@@ -53,7 +53,7 @@ internal class Execute : ActionBase
             if (senderProcess != null)
             {
                 var stdout = senderProcess.StandardOutput.ReadToEnd();
-                logger.LogDebug("Standard output of execution: {stdout}");
+                logger.LogDebug($"Standard output of execution: {stdout}");
             }
             tcs.SetResult(process.ExitCode);
             process.Dispose();
