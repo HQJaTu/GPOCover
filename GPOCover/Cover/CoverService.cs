@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GPOCover.Cover.Actions;
+using GPOCover.Cover.Configuration;
 using GPOCover.Cover.Triggers;
 
 namespace GPOCover.Cover;
@@ -29,90 +30,7 @@ public class CoverService
     {
         this._config = configIn;
 
-        if (this._registryTriggers is null)
-            this._registryTriggers = new List<TriggerRegistryChange>();
-        if (this._directoryTriggers is null)
-            this._directoryTriggers = new List<TriggerDirectoryChange>();
-        if (this._fileLocks is null)
-            this._fileLocks = new List<LockFile>();
-
-        uint configurationId = 1;
-        foreach (var config in this._config) {
-            ++configurationId;
-            switch (config.Trigger) {
-                case Trigger.RegistryChange:
-                    var triggerReg = new TriggerRegistryChange(configurationId, config.Path, this._loggerFactory);
-                    this.AddRegistryChangeWatch(triggerReg, config);
-                    break;
-
-                case Trigger.FilesystemChange:
-                    var dirInfo = new DirectoryInfo(config.Path);
-                    var triggerDir = new TriggerDirectoryChange(configurationId, dirInfo, this._loggerFactory);
-                    this.AddDirectoryChangeWatch(triggerDir, config);
-                    break;
-
-                case Trigger.FilesystemLock:
-                    var fileInfo = new FileInfo(config.Path);
-                    var lockFile = new LockFile(configurationId, fileInfo, this._loggerFactory);
-                    this.AddFileLockWatch(lockFile, config);
-                    break;
-
-                default:
-                    throw new NotImplementedException($"Cannot do trigger type {config.Trigger} yet!");
-            }
-        }
-    }
-
-    internal void AddRegistryChangeWatch(TriggerRegistryChange trigger, CoverConfiguration config)
-    {
-        if (this._registryTriggers is null)
-            throw new ArgumentNullException(nameof(this._registryTriggers));
-        if (this._registryTriggers.Contains(trigger))
-            return;
-
-        this._registryTriggers.Add(trigger);
-        trigger.AddActions(config.Actions.Select(a => this._convertAction(a, config)).ToList<ActionBase>());
-    }
-
-    internal void AddDirectoryChangeWatch(TriggerDirectoryChange trigger, CoverConfiguration config)
-    {
-        if (this._directoryTriggers is null)
-            throw new ArgumentNullException(nameof(this._directoryTriggers));
-        if (this._directoryTriggers.Contains(trigger))
-            return;
-
-        this._directoryTriggers.Add(trigger);
-        trigger.AddActions(config.Actions.Select(a => this._convertAction(a, config)).ToList<ActionBase>());
-    }
-
-    internal void AddFileLockWatch(LockFile trigger, CoverConfiguration config)
-    {
-        if (this._fileLocks is null)
-            throw new ArgumentNullException(nameof(this._registryTriggers));
-        if (this._fileLocks.Contains(trigger))
-            return;
-
-        this._fileLocks.Add(trigger);
-        trigger.AddActions(config.Actions.Select(a => this._convertAction(a, config)).ToList<ActionBase>());
-    }
-
-    internal ActionBase _convertAction(CoverConfigurationAction action, CoverConfiguration config)
-    {
-        this._logger.LogDebug($"Converting action for: {config.Name}");
-
-        if (action.Noop is not null)
-            return new Noop(this._loggerFactory);
-        if (action.Execute is not null)
-        {
-            if (String.IsNullOrEmpty(action.Execute.Command))
-                throw new ArgumentException($"Execute-action for '{config.Name}' needs to have a command!");
-
-            return new Execute(action.Execute.Command, action.Execute.Arguments, this._loggerFactory);
-        }
-        if (action.Sleep is not null)
-            return new Sleep(action.Sleep.Value, this._loggerFactory);
-
-        throw new NotImplementedException($"Unknown action type in YAML!");
+        (this._registryTriggers, this._directoryTriggers, this._fileLocks) = CoverServiceConfigurator.Configure(this._config, this._loggerFactory);
     }
 
     public string GetJoke()

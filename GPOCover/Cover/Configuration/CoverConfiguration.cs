@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 
-namespace GPOCover.Cover;
+namespace GPOCover.Cover.Configuration;
 
 public enum Trigger : ushort
 {
@@ -29,21 +29,34 @@ public class CoverConfiguration
 {
     [YamlMember(Alias = "Name", ApplyNamingConventions = false)]
     public string? Name { get; set; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     [YamlMember(Alias = "Trigger", ApplyNamingConventions = false)]
-    public Trigger Trigger { get; set; }
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    [YamlMember(Alias = "Path", ApplyNamingConventions = false)]
-    public string Path { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    [YamlMember(Alias = "Check-on-start", ApplyNamingConventions = false)]
-    public bool? Check_on_start { get; set; }
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public CoverConfigurationTrigger Trigger { get; set; }
     [YamlMember(Alias = "Actions", ApplyNamingConventions = false)]
     public List<CoverConfigurationAction> Actions { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
 
-public class CoverConfigurationAction {
+public class CoverConfigurationTrigger
+{
+    [YamlMember(Alias = "Type", ApplyNamingConventions = false)]
+    public Trigger Type { get; set; }
+    [YamlMember(Alias = "Path", ApplyNamingConventions = false)]
+    public string? Path { get; set; }
+    [YamlMember(Alias = "Key", ApplyNamingConventions = false)]
+    public string? Key { get; set; }
+    [YamlMember(Alias = "Condition", ApplyNamingConventions = false)]
+    public CoverConfigurationTriggerCondition? Condition { get; set; }
+}
+
+public class CoverConfigurationTriggerCondition
+{
+    [YamlMember(Alias = "ValueExists", ApplyNamingConventions = false)]
+    public string? ValueExists { get; set; }
+}
+
+public class CoverConfigurationAction
+{
     [YamlMember(Alias = "Noop", ApplyNamingConventions = false)]
     public bool? Noop { get; set; }
     [YamlMember(Alias = "Sleep", ApplyNamingConventions = false)]

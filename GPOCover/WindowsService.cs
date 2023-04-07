@@ -1,4 +1,5 @@
 using GPOCover.Cover;
+using GPOCover.Cover.Configuration;
 using static System.Environment;
 
 namespace GPOCover;
