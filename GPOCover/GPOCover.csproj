@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-GPOCover-9b07d088-3b33-4912-995a-92d6c25f48bc</UserSecretsId>
     <Platforms>x64</Platforms>
-    <Configurations>Debug;Release;published</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='published|x64'">
@@ -14,8 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CliWrap" Version="3.6.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.Management" Version="7.0.0" />
     <PackageReference Include="YamlDotNet" Version="13.0.2" />
   </ItemGroup>
