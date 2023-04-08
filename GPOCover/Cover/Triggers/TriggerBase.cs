@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace GPOCover.Cover.Triggers;
 
-internal class TriggerBase
+internal abstract class TriggerBase
 {
     public uint Id { get; }
     internal List<ActionBase> _actions;
@@ -20,6 +20,8 @@ internal class TriggerBase
         this._actions = new List<ActionBase>();
         this._runningActions = false;
     }
+
+    public abstract void Start();
 
     public void AddActions(List<ActionBase> actions)
     {

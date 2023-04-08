@@ -50,6 +50,7 @@ internal static class CoverServiceConfigurator
             registryValueExists = config.Trigger.Condition.ValueExists;
         var trigger = new TriggerRegistryChange(configurationId, config.Trigger.Key, registryValueExists, loggerFactory);
         trigger.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
+        trigger.Start();
 
         return trigger;
     }
@@ -64,6 +65,7 @@ internal static class CoverServiceConfigurator
         var dirInfo = new DirectoryInfo(config.Trigger.Path);
         var trigger = new TriggerDirectoryChange(configurationId, dirInfo, loggerFactory);
         trigger.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
+        trigger.Start();
 
         return trigger;
     }
@@ -79,6 +81,7 @@ internal static class CoverServiceConfigurator
         var lockFile = new LockFile(configurationId, fileInfo, loggerFactory);
         if (config.Actions is not null)
             lockFile.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
+        lockFile.Start();
 
         return lockFile;
     }

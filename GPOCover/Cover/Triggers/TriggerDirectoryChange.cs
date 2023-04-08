@@ -22,6 +22,10 @@ internal class TriggerDirectoryChange : TriggerBase
         _logger = loggerFactory.CreateLogger<TriggerDirectoryChange>();
         _directoryInfo = directoryInfo;
         _trigger = new FilesystemDirectoryChange(_directoryInfo);
+    }
+
+    public override void Start()
+    {
         _trigger.AddChangeCallback(OnChange);
         _trigger.AddRenameCallback(OnRename);
         _trigger.AddErrorCallback(OnError);

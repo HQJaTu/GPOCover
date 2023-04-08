@@ -19,7 +19,10 @@ internal class LockFile : TriggerBase
     {
         _logger = loggerFactory.CreateLogger<LockFile>();
         _fileInfo = fileInfo;
+    }
 
+    public override void Start()
+    {
         DoLockTheFile();
     }
 

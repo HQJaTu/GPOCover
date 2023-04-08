@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GPOCover.RegistryUtils;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 
@@ -12,6 +13,7 @@ namespace GPOCover.Cover.Triggers;
 
 internal class TriggerRegistryChange : TriggerBase
 {
+    protected RegistryKeyChange _keyChange;
     protected RegistryKey Hive { get; set; }
     protected string KeyPath { get; set; }
     protected string? CheckKeyExists { get; set; }
@@ -24,9 +26,17 @@ internal class TriggerRegistryChange : TriggerBase
         _logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
         (Hive, KeyPath) = Parse(path);
         CheckKeyExists = checkKeyExists;
-        var keychange = new RegistryKeyChange(Hive, KeyPath, loggerFactory);
-        keychange.RegistryKeyChanged += new EventHandler<RegistryKeyChangedEventArgs>(OnRegChanged);
-        keychange.Start();
+
+        _keyChange = new RegistryKeyChange(Hive, KeyPath, loggerFactory);
+        _keyChange.RegistryKeyChanged += new EventHandler<RegistryKeyChangedEventArgs>(OnRegChanged);
+    }
+
+    public override void Start()
+    {
+        if (CheckKeyExists is not null && this.CheckIfKeyExists())
+            this.RunActions();
+
+        this._keyChange.Start();
     }
 
     private void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
