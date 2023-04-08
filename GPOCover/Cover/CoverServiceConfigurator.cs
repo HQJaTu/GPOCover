@@ -45,7 +45,10 @@ internal static class CoverServiceConfigurator
         if (config.Trigger.Key is null)
             throw new ArgumentNullException(nameof(config.Trigger.Key));
 
-        var trigger = new TriggerRegistryChange(configurationId, config.Trigger.Key, loggerFactory);
+        string? registryValueExists = null;
+        if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.ValueExists))
+            registryValueExists = config.Trigger.Condition.ValueExists;
+        var trigger = new TriggerRegistryChange(configurationId, config.Trigger.Key, registryValueExists, loggerFactory);
         trigger.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
 
         return trigger;

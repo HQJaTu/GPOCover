@@ -14,14 +14,16 @@ internal class TriggerRegistryChange : TriggerBase
 {
     protected RegistryKey Hive { get; set; }
     protected string KeyPath { get; set; }
+    protected string? CheckKeyExists { get; set; }
 
     protected readonly ILogger<TriggerRegistryChange> _logger;
 
-    public TriggerRegistryChange(uint id, string path, ILoggerFactory loggerFactory) :
+    public TriggerRegistryChange(uint id, string path, string? checkKeyExists, ILoggerFactory loggerFactory) :
         base(id)
     {
         _logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
         (Hive, KeyPath) = Parse(path);
+        CheckKeyExists = checkKeyExists;
         var keychange = new RegistryKeyChange(Hive, KeyPath, loggerFactory);
         keychange.RegistryKeyChanged += new EventHandler<RegistryKeyChangedEventArgs>(OnRegChanged);
         keychange.Start();
@@ -30,7 +32,33 @@ internal class TriggerRegistryChange : TriggerBase
     private void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
     {
         _logger.LogWarning($"Trigger {this.Id}: Registry key: {Hive.Name}\\{KeyPath}, has changed");
-        this.RunActions();
+
+        if (this.CheckKeyExists is null) 
+            this.RunActions();
+        else if (this.CheckIfKeyExists())
+            this.RunActions();
+    }
+
+    private bool CheckIfKeyExists()
+    {
+        try
+        {
+            using (var key = this.Hive.OpenSubKey(this.KeyPath))
+            {
+                if (key is not null)
+                {
+                    if (key.GetValueNames().Contains(this.CheckKeyExists))
+                        return true;
+                }
+            }
+        }
+        catch (Exception) {
+            this._logger.LogError($"Exception while reading registry key '{this.Hive.Name}\\{this.KeyPath}'. Ignoring error.");
+
+            return false;
+        }
+
+        return false;
     }
 
     protected static (RegistryKey, string) Parse(string path)
