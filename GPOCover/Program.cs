@@ -6,7 +6,7 @@ using System.CommandLine;
 using CliWrap;
 using System.Diagnostics;
 
-const string ServiceName = "GPOCover";
+const string ServiceName = "GPOCover"; // see: appsettings.json, EventLog, SourceName for Event Log logging with this application name
 const string ServiceDisplayName = "GPO Cover Service";
 
 #pragma warning disable 1416
