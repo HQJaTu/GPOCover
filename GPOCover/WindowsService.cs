@@ -8,6 +8,7 @@ namespace GPOCover;
 public sealed class WindowsService : BackgroundService
 {
     private readonly CoverService _jokeService;
+    public readonly uint _jokeLogPercent = 5;
     private readonly ILogger<WindowsService> _logger;
 
     public WindowsService(
@@ -20,7 +21,7 @@ public sealed class WindowsService : BackgroundService
         var configPath = Path.Combine(commonpath, @"GPOCover");
         var configDir = new DirectoryInfo(configPath);
         var config = CoverConfigurationReader.Read(configDir, _logger);
-        _jokeService.Configure(config);
+        this._jokeService.Configure(config);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,8 +30,10 @@ public sealed class WindowsService : BackgroundService
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                string joke = _jokeService.GetJoke();
-                _logger.LogWarning("{Joke}", joke);
+                var joke = this._jokeService.GetJoke();
+                var randomValue = Random.Shared.Next(100);
+                if (randomValue < this._jokeLogPercent)
+                    this._logger.LogWarning("{Joke}", joke);
 
                 await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
             }
@@ -42,7 +45,7 @@ public sealed class WindowsService : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "{Message}", ex.Message);
+            this._logger.LogError(ex, "{Message}", ex.Message);
 
             // Terminates this process and returns an exit code to the operating system.
             // This is required to avoid the 'BackgroundServiceExceptionBehavior', which
