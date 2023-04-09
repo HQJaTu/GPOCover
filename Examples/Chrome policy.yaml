@@ -1,0 +1,14 @@
+%YAML 1.1
+---
+Name: Google Chrome policy
+Trigger:
+    Type: RegistryChange
+    Key: HKU\S-1-5-21-123\Software\Policies\Google
+    Condition:
+        KeyExists: Chrome
+Actions:
+    - Sleep: 300
+    - Execute:
+        Command: C:\Windows\system32\reg.exe
+        Arguments: delete "HKU\S-1-5-21-123\Software\Policies\Google\Chrome" /f
+    - Noop: true
