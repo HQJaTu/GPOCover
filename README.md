@@ -46,7 +46,11 @@ In Windows, it is *not* possible to monitor following hives:
 #### (optional) Condition
 As any change in a given key or its subkeys will trigger, sometimes further inspection will be needed for not to run actions unnecessarily.
 
-If no `ValueExists` is specified, any change in a given registry key will trigger actions.
+To run actions only after a registry:
+* sub-key exists, use `KeyExists`
+* value exists, use `ValueExists`
+
+If no `KeyExists` nor `ValueExists` is specified, any change in a given registry key will trigger actions.
 
 Condition is checked on service start. If no condition is specified, no checking is done on service start.
 
@@ -59,7 +63,14 @@ Trigger:
 
 Monitor file system. Trigger on any change.
 
-TBD: Add condition to work similarily like in RegistryChange.
+#### (optional) Condition
+As any change in a given path or its subdirectories will trigger, sometimes further inspection will be needed for not to run actions unnecessarily.
+
+To run actions only after a specific directory or file exists, use `PathExists`
+
+If no `PathExists` is specified, any change in a given registry key will trigger actions.
+
+Condition is checked on service start. If no condition is specified, no checking is done on service start.
 
 ### Trigger: FilesystemLock
 ```yaml
