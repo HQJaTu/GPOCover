@@ -51,6 +51,8 @@ public class CoverConfigurationTrigger
 
 public class CoverConfigurationTriggerCondition
 {
+    [YamlMember(Alias = "KeyExists", ApplyNamingConventions = false)]
+    public string? KeyExists { get; set; }
     [YamlMember(Alias = "ValueExists", ApplyNamingConventions = false)]
     public string? ValueExists { get; set; }
     [YamlMember(Alias = "PathExists", ApplyNamingConventions = false)]

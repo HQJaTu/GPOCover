@@ -47,10 +47,15 @@ internal static class CoverServiceConfigurator
         if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.PathExists))
             throw new ArgumentException($"RegistryChange-trigger '{config.Name}' cannot have 'PathExists'-condition!");
 
+        string? registryKeyExists = null;
         string? registryValueExists = null;
+        if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.KeyExists))
+            registryKeyExists = config.Trigger.Condition.KeyExists;
         if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.ValueExists))
             registryValueExists = config.Trigger.Condition.ValueExists;
-        var trigger = new TriggerRegistryChange(configurationId, config.Trigger.Key, registryValueExists, loggerFactory);
+        var trigger = new TriggerRegistryChange(configurationId, config.Trigger.Key,
+            registryKeyExists, registryValueExists, 
+            loggerFactory);
         trigger.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
         trigger.Start();
 

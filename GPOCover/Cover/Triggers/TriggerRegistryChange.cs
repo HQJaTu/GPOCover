@@ -17,15 +17,19 @@ internal class TriggerRegistryChange : TriggerBase
     protected RegistryKey Hive { get; set; }
     protected string KeyPath { get; set; }
     protected string? CheckKeyExists { get; set; }
+    protected string? CheckValueExists { get; set; }
 
     protected readonly ILogger<TriggerRegistryChange> _logger;
 
-    public TriggerRegistryChange(uint id, string path, string? checkKeyExists, ILoggerFactory loggerFactory) :
+    public TriggerRegistryChange(uint id, string path,
+        string? checkKeyExists, string? checkValueExists,
+        ILoggerFactory loggerFactory) :
         base(id)
     {
         _logger = loggerFactory.CreateLogger<TriggerRegistryChange>();
         (Hive, KeyPath) = Parse(path);
         CheckKeyExists = checkKeyExists;
+        CheckValueExists = checkValueExists;
 
         _keyChange = new RegistryKeyChange(Hive, KeyPath, loggerFactory);
         _keyChange.RegistryKeyChanged += new EventHandler<RegistryKeyChangedEventArgs>(OnRegChanged);
@@ -33,23 +37,29 @@ internal class TriggerRegistryChange : TriggerBase
 
     public override void Start()
     {
+        var key = this.Hive.OpenSubKey(this.KeyPath);
+        if (key is null)
+            throw new ArgumentException($"RegistryChange trigger for {Hive.Name}\\{KeyPath} fails! Key doesn't exist.");
+
         if (CheckKeyExists is not null && this.CheckIfKeyExists())
             this.RunActions();
 
         this._keyChange.Start();
     }
 
-    private void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
+    protected void OnRegChanged(object? sender, RegistryKeyChangedEventArgs e)
     {
         _logger.LogWarning($"Trigger {this.Id}: Registry key: {Hive.Name}\\{KeyPath}, has changed");
 
-        if (this.CheckKeyExists is null) 
+        if (this.CheckKeyExists is null && this.CheckValueExists is null) 
             this.RunActions();
-        else if (this.CheckIfKeyExists())
+        else if (this.CheckKeyExists is not null && this.CheckIfKeyExists())
+            this.RunActions();
+        else if (this.CheckValueExists is not null && this.CheckIfValueExists())
             this.RunActions();
     }
 
-    private bool CheckIfKeyExists()
+    protected bool CheckIfKeyExists()
     {
         try
         {
@@ -57,12 +67,36 @@ internal class TriggerRegistryChange : TriggerBase
             {
                 if (key is not null)
                 {
-                    if (key.GetValueNames().Contains(this.CheckKeyExists))
+                    if (key.GetSubKeyNames().Contains(this.CheckKeyExists))
                         return true;
                 }
             }
         }
-        catch (Exception) {
+        catch (Exception)
+        {
+            this._logger.LogError($"Exception while reading registry key '{this.Hive.Name}\\{this.KeyPath}'. Ignoring error.");
+
+            return false;
+        }
+
+        return false;
+    }
+
+    protected bool CheckIfValueExists()
+    {
+        try
+        {
+            using (var key = this.Hive.OpenSubKey(this.KeyPath))
+            {
+                if (key is not null)
+                {
+                    if (key.GetValueNames().Contains(this.CheckValueExists))
+                        return true;
+                }
+            }
+        }
+        catch (Exception)
+        {
             this._logger.LogError($"Exception while reading registry key '{this.Hive.Name}\\{this.KeyPath}'. Ignoring error.");
 
             return false;
