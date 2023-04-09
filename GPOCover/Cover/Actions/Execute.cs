@@ -34,6 +34,7 @@ internal class Execute : ActionBase
     static Task<int> RunProcessAsync(string fileName, string? arguments, ILogger logger)
     {
         // See: https://github.com/jamesmanning/RunProcessAsTask
+        // To-Do: Replace with https://github.com/Tyrrrz/CliWrap, if possible. It seems CliWrap won't work in the middle of triggered event.
         var tcs = new TaskCompletionSource<int>();
 
         var process = new Process
