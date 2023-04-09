@@ -44,6 +44,8 @@ internal static class CoverServiceConfigurator
             throw new ArgumentNullException(nameof(config.Trigger));
         if (config.Trigger.Key is null)
             throw new ArgumentNullException(nameof(config.Trigger.Key));
+        if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.PathExists))
+            throw new ArgumentException($"RegistryChange-trigger '{config.Name}' cannot have 'PathExists'-condition!");
 
         string? registryValueExists = null;
         if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.ValueExists))
@@ -61,9 +63,14 @@ internal static class CoverServiceConfigurator
             throw new ArgumentNullException(nameof(config.Trigger));
         if (config.Trigger.Path is null)
             throw new ArgumentNullException(nameof(config.Trigger.Path));
+        if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.ValueExists))
+            throw new ArgumentException($"FilesystemChange-trigger '{config.Name}' cannot have 'ValueExists'-condition!");
 
         var dirInfo = new DirectoryInfo(config.Trigger.Path);
-        var trigger = new TriggerDirectoryChange(configurationId, dirInfo, loggerFactory);
+        string? pathExists = null;
+        if (config.Trigger.Condition is not null && !String.IsNullOrEmpty(config.Trigger.Condition.PathExists))
+            pathExists = config.Trigger.Condition.PathExists;
+        var trigger = new TriggerDirectoryChange(configurationId, dirInfo, pathExists, loggerFactory);
         trigger.AddActions(config.Actions.Select(a => _convertAction(a, config, loggerFactory)).ToList<ActionBase>());
         trigger.Start();
 

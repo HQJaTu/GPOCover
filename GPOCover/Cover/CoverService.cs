@@ -35,7 +35,7 @@ public class CoverService
 
     public string GetJoke()
     {
-        var joke = _jokes.ElementAt(Random.Shared.Next(_jokes.Count));
+        var joke = this._jokes.ElementAt(Random.Shared.Next(this._jokes.Count));
 
         return $"{joke.Setup}{Environment.NewLine}{joke.Punchline}";
     }
