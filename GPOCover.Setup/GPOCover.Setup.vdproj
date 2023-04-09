@@ -130,26 +130,27 @@
                 {
                 }
             }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_A21922D88CE54B7EA5EE5A3515F62F39"
+            "{994432C3-9487-495D-8656-3E829A8DBDDE}:_F17D8A74CE5443DC8C0828AEAE430803"
             {
-            "Name" = "8:#1916"
-            "AlwaysCreate" = "11:FALSE"
+            "DefaultLocation" = "8:[CommonAppDataFolder]"
+            "Name" = "8:ProgramData"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
-            "Property" = "8:DesktopFolder"
+            "Property" = "8:PROGRAMDATA"
                 "Folders"
                 {
-                }
-            }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_E98D5B070BEB41BABD4F791125ADF250"
-            {
-            "Name" = "8:#1919"
-            "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:ProgramMenuFolder"
-                "Folders"
-                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C166C405A5124750A6D17A5F768015CA"
+                    {
+                    "Name" = "8:GPOCover"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_0A09CA6B412A4E4789ED3094B7D13690"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -168,15 +169,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GPO Cover"
-        "ProductCode" = "8:{96AB0D26-767A-4EB9-B317-D33D52674A3C}"
-        "PackageCode" = "8:{FB9CD766-5F83-44FD-BEBC-46D7CD3D5C27}"
+        "ProductCode" = "8:{94D264CA-9182-42E4-B333-97CA6CE2BB98}"
+        "PackageCode" = "8:{3D4C32B9-7BF2-4590-884C-A3CA94394A2D}"
         "UpgradeCode" = "8:{899F2220-6FFA-4611-A8C4-A01F4971EF89}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:0.9.1"
         "Manufacturer" = "8:HQ Code Shop"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
