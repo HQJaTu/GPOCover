@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.EventLog;
 using System.CommandLine;
 using CliWrap;
 using System.Diagnostics;
+using System.ServiceProcess;
 
 const string ServiceName = "GPOCover"; // see: appsettings.json, EventLog, SourceName for Event Log logging with this application name
 const string ServiceDisplayName = "GPO Cover Service";
@@ -124,18 +125,23 @@ switch (operationMode) {
         break;
 
     case 2:
-        // Docs: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/sc-create
-        await Cli.Wrap("sc.exe")
-            .WithArguments(new[] {
-                "create",
-                ServiceName,
-                "type=own",
-                $"binPath={GetExecutablePath().FullName}",
-                "start=auto",
-                $"DisplayName={ServiceDisplayName}",
-                "obj=LocalSystem"
-            })
-            .ExecuteAsync();
+        var ctl = System.ServiceProcess.ServiceController.GetServices()
+            .FirstOrDefault(s => s.ServiceName == ServiceName);
+        if (ctl is null)
+            // Docs: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/sc-create
+            await Cli.Wrap("sc.exe")
+                .WithArguments(new[] {
+                    "create",
+                    ServiceName,
+                    "type=own",
+                    $"binPath={GetExecutablePath().FullName}",
+                    "start=auto",
+                    $"DisplayName={ServiceDisplayName}",
+                    "obj=LocalSystem"
+                })
+                .ExecuteAsync();
+        else
+            Console.WriteLine($"Windows Service '{ServiceName}' already exists. Skip Windows Service creation.");
         break;
 
     case 3:
