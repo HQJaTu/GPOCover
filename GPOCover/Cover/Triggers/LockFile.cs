@@ -37,8 +37,9 @@ internal class LockFile : TriggerBase
             Directory.CreateDirectory(_fileInfo.DirectoryName);
         }
 
+        // Docs: https://learn.microsoft.com/en-us/dotnet/api/system.io.filemode?view=net-7.0
         _locked = File.Open(_fileInfo.FullName,
-            FileMode.OpenOrCreate,
+            FileMode.Create,    // Will create a non-existent file, will truncate any existing file
             FileAccess.Write,
             FileShare.None);
         _logger.LogInformation($"Trigger {this.Id}: Locked file: {_fileInfo.FullName}");
