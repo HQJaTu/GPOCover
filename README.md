@@ -110,3 +110,13 @@ Actions:
 ```
 
 Run a command. Arguments are optional.
+
+## Deployment project with `.msi`
+Project for creating deployment package `GPOCover.Setup` will require a Visual Studio extension to operate.
+A Windows Installer MSI will be created. More info: https://learn.microsoft.com/en-us/mem/configmgr/develop/apps/how-to-create-the-windows-installer-file-msi
+
+See extension *Microsoft Visual Studio Installer Projects 2022* at: https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2022InstallerProjects
+for more details.
+
+.Net C# -code can be successfully built and debugged without Installer Projects 2022 -extension.
+You just cannot create a `.msi`-package.
