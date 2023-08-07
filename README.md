@@ -59,6 +59,8 @@ Condition is checked on service start. If no condition is specified, no checking
 Trigger:
     Type: FilesystemChange
     Path: C:\A path\in the system
+    Condition:
+        ValueExists: foo
 ```
 
 Monitor file system. Trigger on any change.
@@ -68,9 +70,7 @@ As any change in a given path or its subdirectories will trigger, sometimes furt
 
 To run actions only after a specific directory or file exists, use `PathExists`
 
-If no `PathExists` is specified, any change in a given registry key will trigger actions.
-
-Condition is checked on service start. If no condition is specified, no checking is done on service start.
+Optional condition is checked on service start. If no condition is specified, no checking is done on service start.
 
 ### Trigger: FilesystemLock
 ```yaml
