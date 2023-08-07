@@ -101,7 +101,7 @@ Actions:
 
 Pause execution for amount of milliseconds [*ms*]. Sometimes acting instantly on a trigger is *too-fast-4-you* and bit of delay must be applied.
 
-### Action: Sleep
+### Action: Execute
 ```yaml
 Actions:
     - Execute:
